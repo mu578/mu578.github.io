@@ -80,13 +80,13 @@
 					r3    = prnd4(v3 * 7.2);
 					v0    = v2;
 					t     = t - r0 + r3;
-					v0.x += sin(t * r0) * cos(t * r1) * tan(t * r0 * 0.10) * 0.1;
+					v0.x += sin(t * r0) * cos(t * r1) * atan(t * r0 * 0.10) * 0.1;
 					v0.y += sin(t * r2) * sin(t * r3) * atan(v0.x);
 					d     = pow(1.6 * r2 / length(v0 - v1), u_blobiness);
 					if      (i < m * 0.3) { a += d; }
 					else if (i < m * 0.6) { b += d; }
 					else                  { c += d; }
-					n       += k * r2;
+					n    += k * r2;
 				}
 			}
 			gl_FragColor = vec4(vec3(a * c, b * c, a * b) * 0.0001 * u_brightness, 1.0);
