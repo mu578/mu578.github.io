@@ -71,7 +71,7 @@
 			float k     = 1.0 / u_particles;
 			float n     = 4.95;
 
-			for (float i = 0.0; i <= 1.0; i += 0.02) {
+			for (float i = 0.0; i <= 1.0; i += 0.025) {
 				if (i <= m) {
 					v3    = vec2(n, n * i);
 					r0    = prnd0(v3 * 0.9);
@@ -96,16 +96,15 @@
 
 	try {
 		gl = Sketch.create({
-			container  : document.getElementById('glview'),
-			type       : Sketch.WEBGL,
-			brightness : 1.0,
-			blobiness  : 0.9,
-			retina     : true,
-			particles  : 80,
-			energy     : 0.09
+			  container  : document.getElementById('glview')
+			, type       : Sketch.WEBGL
+			, brightness : 1.0
+			, blobiness  : 0.9
+			, retina     : true
+			, particles  : 80
+			, energy     : 0.09
 		});
-	} catch (err) {
-		error              = err;
+	} catch (error) {
 		nogl               = document.getElementById('noglview');
 		nogl.style.display = 'block';
 	}
@@ -119,47 +118,43 @@
 			vert                          = this.createShader(this.VERTEX_SHADER);
 			frag                          = this.createShader(this.FRAGMENT_SHADER);
 			
-			this.shaderSource(vert, shader.vert);
-			this.shaderSource(frag, shader.frag);
-			this.compileShader(vert);
-			this.compileShader(frag);
-			
+			this.shaderSource  (vert, shader.vert);
+			this.shaderSource  (frag, shader.frag);
+			this.compileShader (vert);
+			this.compileShader (frag);
+
 			if (!this.getShaderParameter(vert, this.COMPILE_STATUS)) { throw this.getShaderInfoLog(vert); }
 			if (!this.getShaderParameter(frag, this.COMPILE_STATUS)) { throw this.getShaderInfoLog(frag); }
-			
+
 			this.shaderProgram            = this.createProgram();
-			this.attachShader(this.shaderProgram, vert);
-			this.attachShader(this.shaderProgram, frag);
-			this.linkProgram(this.shaderProgram);
+			this.attachShader (this.shaderProgram, vert);
+			this.attachShader (this.shaderProgram, frag);
+			this.linkProgram  (this.shaderProgram);
+
+			if (!this.getProgramParameter(this.shaderProgram, this.LINK_STATUS)) { throw this.getProgramInfoLog(this.shaderProgram); }
 			
-			if (!this.getProgramParameter(this.shaderProgram, this.LINK_STATUS)) { throw this.getProgramInfoLog(this.shaderProgram);}
-			
-			this.useProgram(this.shaderProgram);
-			this.shaderProgram.attributes = { v1: this.getAttribLocation(this.shaderProgram, 'x') };
-			
+			this.useProgram   (this.shaderProgram);
+			this.shaderProgram.attributes = { x: this.getAttribLocation(this.shaderProgram, 'x') };
+
 			this.shaderProgram.uniforms   = {
-				resolution : this.getUniformLocation(this.shaderProgram, 'u_resolution'),
-				brightness : this.getUniformLocation(this.shaderProgram, 'u_brightness'),
-				blobiness  : this.getUniformLocation(this.shaderProgram, 'u_blobiness'),
-				particles  : this.getUniformLocation(this.shaderProgram, 'u_particles'),
-				energy     : this.getUniformLocation(this.shaderProgram, 'u_energy'),
-				millis     : this.getUniformLocation(this.shaderProgram, 'u_millis')
+				  resolution : this.getUniformLocation(this.shaderProgram, 'u_resolution')
+				, brightness : this.getUniformLocation(this.shaderProgram, 'u_brightness')
+				, blobiness  : this.getUniformLocation(this.shaderProgram, 'u_blobiness')
+				, particles  : this.getUniformLocation(this.shaderProgram, 'u_particles')
+				, energy     : this.getUniformLocation(this.shaderProgram, 'u_energy')
+				, millis     : this.getUniformLocation(this.shaderProgram, 'u_millis')
 			};
-			
-			this.geometry = this.createBuffer();
-			this.geometry.vertexCount = 6;
-			this.bindBuffer(this.ARRAY_BUFFER, this.geometry);
-			this.bufferData(this.ARRAY_BUFFER, new Float32Array(
-				[-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0]),
-				this.STATIC_DRAW
-			);
-			
-			this.enableVertexAttribArray(this.shaderProgram.attributes.v1);
-			this.vertexAttribPointer(this.shaderProgram.attributes.v1, 2, this.FLOAT, false, 0, 0);
-			
+
+			this.geometry                 = this.createBuffer();
+			this.geometry.vertexCount     = 6;
+			this.bindBuffer              (this.ARRAY_BUFFER, this.geometry);
+			this.bufferData              (this.ARRAY_BUFFER, new Float32Array([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0]), this.STATIC_DRAW);
+			this.enableVertexAttribArray (this.shaderProgram.attributes.x);
+			this.vertexAttribPointer     (this.shaderProgram.attributes.x, 2, this.FLOAT, false, 0, 0);
+
 			return this.resize();
 		};
-		
+
 		gl.updateUniforms = function()
 		{
 			if (!this.shaderProgram) { return; }
